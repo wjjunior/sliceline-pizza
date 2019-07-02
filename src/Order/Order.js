@@ -49,7 +49,7 @@ const DetailItem = styled.div`
     font-size: 10px;
 `
 
-function sendOrder(orders, {email, displayName}) {
+function sendOrder(orders, { email, displayName }) {
     const newOrderRef = database.ref('orders').push()
     const newOrders = orders.map(order => {
         return Object.keys(order).reduce((acc, orderKey) => {
@@ -60,8 +60,8 @@ function sendOrder(orders, {email, displayName}) {
                 return {
                     ...acc,
                     [orderKey]: order[orderKey]
-                    .filter(({ checked }) => checked)
-                    .map(({ name }) => name)
+                        .filter(({ checked }) => checked)
+                        .map(({ name }) => name)
                 }
             }
             return {
@@ -77,7 +77,7 @@ function sendOrder(orders, {email, displayName}) {
     })
 }
 
-export function Order({ orders, setOrders, setOpenFood, login, loggedIn }) {
+export function Order({ orders, setOrders, setOpenFood, login, loggedIn, setOpenOrderDialog }) {
     const subtotal = orders.reduce((total, order) => {
         return total + getPrice(order)
     }, 0)
@@ -145,17 +145,16 @@ export function Order({ orders, setOrders, setOpenFood, login, loggedIn }) {
                     </OrderContainer>
                 </OrderContent>
             )}
-        <DialogFooter>
+        {orders.length > 0 && <DialogFooter>
             <ConfirmButton onClick={() => {
                 if (loggedIn) {
-                    console.log('logged in')
-                    // setOpenOrderDialog(true)
+                    setOpenOrderDialog(true)
                     sendOrder(orders, loggedIn)
                 } else {
                     // login(setOpenOrderDialog)
                     login()
                 }
             }}>Checkout</ConfirmButton>
-        </DialogFooter>
+        </DialogFooter>}
     </OrderStyled>
 }
